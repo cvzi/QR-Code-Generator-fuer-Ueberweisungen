@@ -3,7 +3,7 @@ Released under GPLv3
 
 **This program is untested and probably faulty. For testing purposes only. Do not use this for actual bank transfers!**
 
-[Preview](https://raw.githubusercontent.com/cvzi/QR-Code-Generator-fuer-Ueberweisungen/master/QR-Code-Generator-fuer-Ueberweisungen.html)
+[Preview](http://cvzi.github.io/QR-Code-Generator-fuer-Ueberweisungen/)
 
 The guidelines for the images can be found here: [Quick Response Code: Guidelines to Enable Data Capture for the Initiation of a SEPA Credit Transfer ](http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/quick-response-code-guidelines-to-enable-data-capture-for-the-initiation-of-a-sepa-credit-transfer/)
 
