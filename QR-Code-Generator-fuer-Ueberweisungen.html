@@ -744,8 +744,8 @@ var txt = {
     en : "Generate QR Code"
   },
   txt_h2qrcode : {
-    de : "QR Code",
-    en : "QR Code"
+    de : "QR Code (Quick Transfer Code und BezahlCode)",
+    en : "QR Code (Quick transfer code and BezahlCode)"
   },
   qrcanv : {
     de : "Keine Canvas Unterstützung",
@@ -820,7 +820,7 @@ function composeString() {
     "accountHolder" : $("#inp_accountHolder").val(),
     "iban" : $("#inp_iban").val(),
     "bic" :$("#inp_bic").val(),
-    "amount" : $("#inp_amount").val(),
+    "amount" : $("#inp_amount").val().replace(/,/,'.'),
     "purposeCode" : $("#inp_purposeCode").val(),
     "reference" : $("#inp_reference").val(),
     "remittanceInformation" : $("#inp_remittanceInformation").val(),
@@ -837,16 +837,40 @@ function composeString() {
   
   return str;
 }
+function composeString2() {
+  var str = "{scheme}://{authority}?bic={bic}&name={accountHolder}&iban={iban}&amount={amount}&separeference={reference}&reason={remittanceInformation}";
+  var data = {
+    "scheme" : "bank",
+    "authority" : "singlepaymentsepa",
+    "accountHolder" : encodeURIComponent($("#inp_accountHolder").val()),
+    "iban" : encodeURIComponent($("#inp_iban").val()),
+    "bic" : encodeURIComponent($("#inp_bic").val()),
+    "amount" : encodeURIComponent($("#inp_amount").val().replace(/\./,',')),
+    "reference" : encodeURIComponent($("#inp_reference").val()),
+    "remittanceInformation" : encodeURIComponent($("#inp_remittanceInformation").val())
+  };
 
+  if(!validateData(data)) {
+    return false;
+  }
+  
+  for(var name in data) {
+    str = str.replace(new RegExp("\{" + name + "\}","g"), data[name]);
+  }
+  
+  return str;
+}
 
 function generateCode()  {
 
   // generate data string
   var str = composeString();
-  $("#out_raw").html(str.replace(/\n/g,"<br>"));
+  var str2 = composeString2();
+  $("#out_raw").html(str.replace(/\n/g,"<br>")+"<hr><a href=\""+str2+"\">"+str2+"</a>");
   if(!str) return false;
 
   // setup
+  var margin = 20; // distance between the two images
   var wd = window.innerWidth-10;
   var ht = window.innerHeight-10;
 
@@ -858,7 +882,7 @@ function generateCode()  {
   qrc.canvas.width = wd;
   qrc.canvas.height = ht;
   qrc.fillStyle = '#eee';
-  qrc.fillRect(0,0,wd,ht);
+  qrc.fillRect(0,0,qrc.canvas.width,qrc.canvas.height);
 
   // create code
   var d = document;
@@ -870,7 +894,7 @@ function generateCode()  {
   if( ht < wd ) {
     px = ht;
     }
-  px /= width+10;
+  px /= width+12;
   px = Math.round(px - 0.5);
   qrc.clearRect(0,0,wd,ht);
   qrc.fillStyle = '#fff';
@@ -879,10 +903,24 @@ function generateCode()  {
   for(var i = 0; i < width; i++ ) {
     for(var j = 0; j < width; j++ ) {
       if( qf[j*width+i] ) {
-        qrc.fillRect(px*(4+i),px*(4+j),px,px)
+        qrc.fillRect(px*(4+i),px*(4+j),px,px);
       }
     }
   }
+  var x = px*(4+i) + margin;
+  
+  // create 2nd code
+  var qf = genframe(str2);
+  for(var i = 0; i < width; i++ ) {
+    for(var j = 0; j < width; j++ ) {
+      if( qf[j*width+i] ) {
+        qrc.fillRect(x+px*(4+i),px*(4+j),px,px);
+      }
+    }
+  } 
+  
+  
+  
 }
 
 $(document).ready(function() {
@@ -899,6 +937,14 @@ $(document).ready(function() {
   }
   
   $("#btn_generate").click(generateCode);
+  
+  // Test data
+  $("#inp_accountHolder").val("Max Mustermann");
+  $("#inp_iban").val("DE19123412341234123412");
+  $("#inp_bic").val("DEZZZYYYXXX");
+  $("#inp_amount").val("19.05");
+  $("#inp_remittanceInformation").val("Testsubject");
+  $("#btn_generate").click();
 });
   
 </script>
@@ -909,9 +955,9 @@ $(document).ready(function() {
   
     <h2 style="color:red">This program is untested and faulty. For testing purposes only. Do not use this for actual bank transfers!
     <br>Dieses Programm ist ungetest und fehlerbehaftet. Es besteht nur zu Testzwecken. Benutzen Sie dieses Programm nicht für Überweisungen!
-    <br>Benutzen Sie die offizielle Seite <a href="https://www.girocode.de/">girocode .de</a> der Sparkassen-Finanzgruppe</h2>
+    <br>Benutzen Sie die offizielle Seite <a href="https://www.girocode.de/">girocode.de</a> der Sparkassen-Finanzgruppe oder <a href="http://www.bezahlcode.de/">bezahlcode.de</a></h2>
     
-    <a href="?en">English</a> - <a href="?de">Deutsch</a>
+    <a href="?en">English</a> - <a href="?de">Deutsch</a> - <a href="https://github.com/cvzi/QR-Code-Generator-fuer-Ueberweisungen">Source code</a>
   
     <h1 id="txt_h1"></h1>
     <div>
@@ -1031,7 +1077,7 @@ $(document).ready(function() {
          <canvas id="out_qrcanv"></canvas>
       </div>
       
-      <h2>Raw:</h2>
+      <h2>Raw data:</h2>
       
       <div>
         <div style="font-family:monospace" id="out_raw"></div>
