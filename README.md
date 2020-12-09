@@ -25,7 +25,7 @@ $ npm install --save iban-qr-code
 
 ## Examples
 ```
-const { girocode, bezahlcode } = require('./index.js')
+const { girocode, bezahlcode } = require('iban-qr-code')
 
 girocode({
   name: '',
