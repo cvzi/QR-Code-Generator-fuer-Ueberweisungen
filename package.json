@@ -1,0 +1,32 @@
+{
+  "name": "iban-qr-code",
+  "version": "1.0.0",
+  "description": "Creates strings for a QR code to initiate a SEPA credit transfer (SCT). Similar to Girocode or BezahlCode in Germany",
+  "main": "index.js",
+  "exports": {
+    "require": "./index.js",
+    "import": "./esm/wrapper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:cvzi/QR-Code-Generator-fuer-Ueberweisungen.git"
+  },
+  "keywords": [
+    "giro",
+    "qr",
+    "bezahlcode",
+    "girocode",
+    "iban",
+    "sepa",
+    "bank",
+    "transfer",
+    "bic",
+    "epc"
+  ],
+  "author": "cuzi",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/cvzi/QR-Code-Generator-fuer-Ueberweisungen/issues"
+  },
+  "homepage": "https://github.com/cvzi/QR-Code-Generator-fuer-Ueberweisungen"
+}
